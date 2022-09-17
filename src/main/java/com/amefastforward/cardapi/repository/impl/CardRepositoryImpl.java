@@ -1,5 +1,6 @@
 package com.amefastforward.cardapi.repository.impl;
 
+import com.amefastforward.cardapi.exception.InvalidEntityException;
 import com.amefastforward.cardapi.model.Card;
 import com.amefastforward.cardapi.repository.CardRepository;
 import org.springframework.stereotype.Repository;
@@ -36,5 +37,20 @@ public class CardRepositoryImpl implements CardRepository {
     @Override
     public Optional<Card> findById(int id) {
         return cards.stream().filter(card -> card.getId() == id).findFirst();
+    }
+
+    @Override
+    public Card save(Card card) {
+        var cardFound = cards.stream()
+                .filter(cardInList -> cardInList.getName().equals(card.getName()))
+                .findFirst();
+
+        if (cardFound.isPresent()) {
+            throw new InvalidEntityException("Nome [" + card.getName() + "] ");
+        }
+
+        card.setId(cards.size() + 1);
+        cards.add(card);
+        return card;
     }
 }
