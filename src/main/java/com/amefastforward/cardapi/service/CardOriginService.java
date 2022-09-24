@@ -36,4 +36,10 @@ public class CardOriginService {
 
         return cardOriginRepository.save(cardOrigin);
     }
+
+    public void deleteCard(long id) {
+        var card = findById(id);
+        cardOriginRepository.delete(card);
+        //cardRepository.deleteById(id);
+    }
 }

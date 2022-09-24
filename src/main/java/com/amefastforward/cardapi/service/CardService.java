@@ -24,8 +24,9 @@ public class CardService {
         this.cardOriginRepository = cardOriginRepository;
     }
 
-    public Optional<Card> findById(long id) {
-        return cardRepository.findById(id);
+    public Card findById(long id) {
+        return cardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Card origin de id [" + id +"] não encontrado."));
     }
 
     public Card createCard(CreateCardRequest cardRequest) {
@@ -47,5 +48,11 @@ public class CardService {
         card.setUpdatedAt(LocalDateTime.now());
 
         return cardRepository.save(card);
+    }
+
+    public void deleteCard(long id) {
+        var card = findById(id);
+        cardRepository.delete(card);
+        //cardRepository.deleteById(id);
     }
 }
