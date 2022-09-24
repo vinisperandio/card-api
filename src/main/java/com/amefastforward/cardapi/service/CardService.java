@@ -19,7 +19,7 @@ public class CardService {
         this.cardRepository = cardRepository;
     }
 
-    public Optional<Card> findById(int id) {
+    public Optional<Card> findById(long id) {
         return cardRepository.findById(id);
     }
 
