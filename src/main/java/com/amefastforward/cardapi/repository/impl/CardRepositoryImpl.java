@@ -1,56 +1,78 @@
 package com.amefastforward.cardapi.repository.impl;
 
-import com.amefastforward.cardapi.exception.InvalidEntityException;
+import com.amefastforward.cardapi.controller.CardOriginController;
 import com.amefastforward.cardapi.model.Card;
 import com.amefastforward.cardapi.repository.CardRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 @Repository
 public class CardRepositoryImpl implements CardRepository {
 
-    private final List<Card> cards;
+    private static final Logger LOG = LoggerFactory.getLogger(CardRepositoryImpl.class);
 
-    public CardRepositoryImpl() {
-        cards = new ArrayList<>();
+    private final ConnectionFactory connectionFactory;
 
-        var card = new Card();
-        card.setId(1);
-        card.setName("Iron Man");
-        card.setDescription("Tony Stark");
-        card.setStrength(5);
-        card.setSpeed(5);
-        card.setSkill(7);
-        card.setGear(6);
-        card.setIntellect(7);
-        card.setImageUrl("url_image_iron_man");
-        card.setCreatedAt(LocalDateTime.now());
-        card.setUpdatedAt(LocalDateTime.now());
-
-        cards.add(card);
+    @Autowired
+    public CardRepositoryImpl(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
     @Override
     public Optional<Card> findById(int id) {
-        return cards.stream().filter(card -> card.getId() == id).findFirst();
+        String query = "SELECT * FROM card WHERE id = ?";
+
+        try(Connection connection = connectionFactory.getConnection()) {
+            try(PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, id);
+                statement.execute();
+
+                ResultSet resultSet = statement.getResultSet();
+                if (resultSet.next()) {
+                    Card card = new Card();
+                    card.setId(resultSet.getInt("id"));
+                    card.setName(resultSet.getString("name"));
+                    card.setDescription(resultSet.getString("description"));
+                    card.setImageUrl(resultSet.getString("image_url"));
+                    card.setStrength(resultSet.getInt("strength"));
+                    card.setSpeed(resultSet.getInt("speed"));
+                    card.setSkill(resultSet.getInt("skill"));
+                    card.setGear(resultSet.getInt("gear"));
+                    card.setIntellect(resultSet.getInt("intellect"));
+                    card.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                    card.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+
+                    return Optional.of(card);
+                }
+            }
+
+        } catch (SQLException e) {
+            LOG.error("{}", e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public Card save(Card card) {
-        var cardFound = cards.stream()
-                .filter(cardInList -> cardInList.getName().equals(card.getName()))
-                .findFirst();
-
-        if (cardFound.isPresent()) {
-            throw new InvalidEntityException("Nome [" + card.getName() + "] ");
-        }
-
-        card.setId(cards.size() + 1);
-        cards.add(card);
-        return card;
+//        var cardFound = cards.stream()
+//                .filter(cardInList -> cardInList.getName().equals(card.getName()))
+//                .findFirst();
+//
+//        if (cardFound.isPresent()) {
+//            throw new InvalidEntityException("Nome [" + card.getName() + "] ");
+//        }
+//
+//        card.setId(cards.size() + 1);
+//        cards.add(card);
+        return new Card();
     }
 }

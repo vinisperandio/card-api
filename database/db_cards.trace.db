@@ -1,0 +1,31 @@
+2022-09-24 08:35:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ORIGIN" already exists; SQL statement:
+CREATE TABLE origin
+(
+    id          int NOT NULL AUTO_INCREMENT,
+    name        varchar(255) UNIQUE NOT NULL,
+    description varchar(1024)       NOT NULL,
+    creator     varchar(255)        NOT NULL,
+    created_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) [42101-214]
+2022-09-24 08:35:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CARD" already exists; SQL statement:
+CREATE TABLE card
+(
+    id          int NOT NULL AUTO_INCREMENT,
+    name        varchar(255) UNIQUE NOT NULL,
+    description varchar(255) DEFAULT NULL,
+    strength    int          DEFAULT '1',
+    speed       int          DEFAULT '1',
+    skill       int          DEFAULT '1',
+    gear        int          DEFAULT '1',
+    intellect   int          DEFAULT '1',
+    image_url   varchar(255) DEFAULT NULL,
+    created_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    origin_id    int NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (origin_id) REFERENCES origin (id)
+) [42101-214]
