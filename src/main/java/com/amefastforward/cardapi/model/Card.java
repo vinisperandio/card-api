@@ -102,6 +102,14 @@ public class Card {
         this.imageUrl = imageUrl;
     }
 
+    public CardOrigin getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(CardOrigin origin) {
+        this.origin = origin;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

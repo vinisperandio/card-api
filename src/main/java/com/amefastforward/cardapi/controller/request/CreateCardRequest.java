@@ -1,6 +1,7 @@
 package com.amefastforward.cardapi.controller.request;
 
 public class CreateCardRequest {
+
     private String name;
     private String description;
     private int strength;
@@ -9,6 +10,7 @@ public class CreateCardRequest {
     private int gear;
     private int intellect;
     private String imageUrl;
+    private long originId;
 
     public String getName() {
         return name;
@@ -74,6 +76,14 @@ public class CreateCardRequest {
         this.imageUrl = imageUrl;
     }
 
+    public long getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(long originId) {
+        this.originId = originId;
+    }
+
     @Override
     public String toString() {
         return "CreateCardRequest{" +
@@ -85,6 +95,7 @@ public class CreateCardRequest {
                 ", gear=" + gear +
                 ", intellect=" + intellect +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", originId=" + originId +
                 '}';
     }
 }

@@ -1,7 +1,9 @@
 package com.amefastforward.cardapi.service;
 
 import com.amefastforward.cardapi.controller.request.CreateCardRequest;
+import com.amefastforward.cardapi.exception.EntityNotFoundException;
 import com.amefastforward.cardapi.model.Card;
+import com.amefastforward.cardapi.repository.CardOriginRepository;
 import com.amefastforward.cardapi.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,12 @@ public class CardService {
 
     private final CardRepository cardRepository;
 
+    private final CardOriginRepository cardOriginRepository;
+
     @Autowired
-    public CardService(CardRepository cardRepository) {
+    public CardService(CardRepository cardRepository, CardOriginRepository cardOriginRepository) {
         this.cardRepository = cardRepository;
+        this.cardOriginRepository = cardOriginRepository;
     }
 
     public Optional<Card> findById(long id) {
@@ -24,6 +29,10 @@ public class CardService {
     }
 
     public Card createCard(CreateCardRequest cardRequest) {
+
+        var origin = cardOriginRepository.findById(cardRequest.getOriginId())
+                .orElseThrow(() -> new EntityNotFoundException("Card origin de id [" + cardRequest.getOriginId() +"] não encontrado."));
+
         var card = new Card();
         card.setName(cardRequest.getName());
         card.setDescription(cardRequest.getDescription());
@@ -33,6 +42,7 @@ public class CardService {
         card.setGear(cardRequest.getGear());
         card.setIntellect(cardRequest.getIntellect());
         card.setImageUrl(cardRequest.getImageUrl());
+        card.setOrigin(origin);
         card.setCreatedAt(LocalDateTime.now());
         card.setUpdatedAt(LocalDateTime.now());
 
