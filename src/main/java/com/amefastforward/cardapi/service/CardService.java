@@ -1,6 +1,7 @@
 package com.amefastforward.cardapi.service;
 
 import com.amefastforward.cardapi.controller.request.CreateCardRequest;
+import com.amefastforward.cardapi.controller.request.UpdateCardRequest;
 import com.amefastforward.cardapi.exception.EntityNotFoundException;
 import com.amefastforward.cardapi.model.Card;
 import com.amefastforward.cardapi.repository.CardOriginRepository;
@@ -54,5 +55,27 @@ public class CardService {
         var card = findById(id);
         cardRepository.delete(card);
         //cardRepository.deleteById(id);
+    }
+
+    public Card update(long id, UpdateCardRequest updateCardRequest) {
+        var card = findById(id);
+        card.setName(updateCardRequest.getName());
+        card.setDescription(
+                updateCardRequest.getDescription().isBlank() ? card.getDescription() : updateCardRequest.getDescription()
+        );
+        card.setStrength(updateCardRequest.getStrength());
+        card.setSpeed(updateCardRequest.getSpeed());
+        card.setSkill(updateCardRequest.getSkill());
+        card.setGear(updateCardRequest.getGear());
+        card.setIntellect(updateCardRequest.getIntellect());
+        card.setImageUrl(updateCardRequest.getImageUrl());
+
+        if (updateCardRequest.getOriginId() != 0L && updateCardRequest.getOriginId() != card.getOrigin().getId()) {
+            var origin = cardOriginRepository.findById(updateCardRequest.getOriginId())
+                    .orElseThrow(() -> new EntityNotFoundException("Card origin de id [" + updateCardRequest.getOriginId() +"] não encontrado."));;
+            card.setOrigin(origin);
+        }
+
+        return cardRepository.save(card);
     }
 }
