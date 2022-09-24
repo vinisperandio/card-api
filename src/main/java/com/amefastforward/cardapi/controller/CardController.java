@@ -4,6 +4,8 @@ import com.amefastforward.cardapi.controller.request.CreateCardRequest;
 import com.amefastforward.cardapi.controller.request.UpdateCardRequest;
 import com.amefastforward.cardapi.model.Card;
 import com.amefastforward.cardapi.service.CardService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/card")
+@Api("Controller responsavel por manipular a entidade Card")
 public class CardController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CardController.class);
@@ -32,6 +34,7 @@ public class CardController {
         this.cardService = cardService;
     }
 
+    @ApiOperation("Endpoint que retorna o status da aplicação")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/health")
     public String health() {
